@@ -1,0 +1,34 @@
+func NormalizeArrayType(arr interface{}) (interface{}, error) {
+	arrValue := reflect.ValueOf(arr)
+	if arrValue.Kind() != reflect.Array {
+		return nil, fmt.Errorf("Type '%s' is not an array for value: %s", arrValue.Type().Name(), arr)
+	}
+	if arrValue.Len() == 0 {
+		return nil, fmt.Errorf("Array passed to __in lookup must have at least one item")
+	}
+	switch value := arr.(type) {
+	case []string, []bool, []int16, []int, []int32, []int64, []kvptools.DateTime, []kvptools.Date, []kvptools.Time,
+		[]float32, []float64:
+		return arr, nil
+	case []interface{}:
+		firstValue := reflect.ValueOf(arr[0])
+		firstType := firstValue.Type()
+		typedSlice := reflect.MakeSlice(reflect.SliceOf(firstType), arrValue.Len(), 0)
+		typedSlice.Index(0).Set(firstValue)
+		for i := 1; i < arrValue.Len(); i++ {
+			otherValue := reflect.ValueOf(arr[i])
+			otherType := otherValue.Type()
+			if otherType.Kind() != firstType.Kind() || otherType.Name() != firstType.Name() ||
+				otherType.PkgPath() != firstType.PkgPath() {
+				return nil, fmt.Errorf("Invalid type '%s.%s' at index %d - expected '%s.%s'", otherType.PkgPath(),
+					otherType.Name(), i, firstType.PkgPath(), firstType.Name())
+			} else {
+				typedSlice.Index(i).Set(otherValue)
+			}
+		}
+		return typedSlice.Interface(), nil
+	default:
+		return nil, fmt.Errorf("Invalid type '%s' for value: %s", arrValue.Type().Name(), value)
+	}
+	return arr, nil
+}

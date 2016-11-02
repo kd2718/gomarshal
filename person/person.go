@@ -68,17 +68,20 @@ func typeSwitch(v interface{}) interface{} {
 }
 
 func (p *Person) Unmarshal(b []byte) (err error) {
-	var f interface{}
-	err = json.Unmarshal(b, &f)
-	m := f.(map[string]interface{})
-	for key, value := range m {
-		m[key] = typeSwitch(value)
-	}
+	//var f interface{}
+	err = json.Unmarshal(b, &p)
+	// type switch here
 
-	p.Age = Age(m["Age"].(int))
-	p.First = m["First"].(string)
-	p.Last = m["Last"].(string)
-	p.CoolInfo = m["CoolInfo"]
+
+	//m := f.(map[string]interface{})
+	//for key, value := range m {
+	//	m[key] = typeSwitch(value)
+	//}
+	//
+	//p.Age = Age(m["Age"].(int))
+	//p.First = m["First"].(string)
+	//p.Last = m["Last"].(string)
+	//p.CoolInfo = m["CoolInfo"]
 
 	return
 }
