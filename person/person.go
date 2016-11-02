@@ -1,11 +1,11 @@
 /*
 Person and Developer structs. To be used in further packages
- */
+*/
 package person
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"reflect"
 )
 
@@ -16,9 +16,9 @@ func (a *Age) Birthday() {
 }
 
 type Person struct {
-	Age   Age
-	First string
-	Last  string
+	Age      Age
+	First    string
+	Last     string
 	CoolInfo interface{}
 }
 
@@ -41,11 +41,10 @@ func (d Developer) Marshal() ([]byte, error) {
 }
 
 func typeSwitch(v interface{}) interface{} {
-	fmt.Println("checking types")
-	switch arg := v.(type){
-		default:
-			fmt.Println("Couldn't match type", arg)
-			return v
+	switch arg := v.(type) {
+	default:
+		fmt.Println("Couldn't match type", arg)
+		return v
 	//case int, float32, float64:
 	//	fmt.Println("standard")
 	//	return Age(v)
@@ -72,12 +71,10 @@ func (p *Person) Unmarshal(b []byte) (err error) {
 	var f interface{}
 	err = json.Unmarshal(b, &f)
 	m := f.(map[string]interface{})
-	//_ = m
-	//
 	for key, value := range m {
 		m[key] = typeSwitch(value)
 	}
-	fmt.Println("unmarshaled m", m)
+
 	p.Age = Age(m["Age"].(int))
 	p.First = m["First"].(string)
 	p.Last = m["Last"].(string)
@@ -98,12 +95,9 @@ func (d *Developer) Unmarshal(b []byte) (err error) {
 		m[key] = typeSwitch(value)
 	}
 
-	fmt.Println("unmarshaled next thing")
 	d.Person = &per
 
-	fmt.Println("person ok")
 	d.Language = m["Language"].(string)
-	fmt.Println("lang ok", m)
 
 	return
 }
@@ -135,7 +129,7 @@ func HardTimes(a Ager) {
 	a.Birthday()
 }
 
-func NewDeveloper(age Age, first, last, language string, v interface{}) *Developer{
+func NewDeveloper(age Age, first, last, language string, v interface{}) *Developer {
 	return &Developer{
 		&Person{
 			age,
