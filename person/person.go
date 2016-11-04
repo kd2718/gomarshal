@@ -20,6 +20,28 @@ type Person struct {
 	First    string
 	Last     string
 	CoolInfo interface{}
+	personChan chan Person
+}
+
+func (p *Person) Loop(outside chan Person){
+
+	guy := new(Person)
+	// register everyone
+	select{
+	case *guy = <- outside:
+		break
+	case *guy = <- guy.personChan:
+		outside <- *p
+	default:
+		outside <- *p
+	}
+
+	fmt.Println("I am", p)
+	fmt.Println("He is", guy)
+}
+
+type Looper interface{
+	Loop(c chan Person)
 }
 
 func (p Person) String() string {
@@ -132,14 +154,24 @@ func HardTimes(a Ager) {
 	a.Birthday()
 }
 
+func NewPerson(age Age, first, last string, v interface{}) *Person {
+	return &Person{
+		age,
+		first,
+		last,
+		v,
+		make(chan Person),
+	}
+}
+
 func NewDeveloper(age Age, first, last, language string, v interface{}) *Developer {
 	return &Developer{
-		&Person{
+		NewPerson(
 			age,
 			first,
 			last,
 			v,
-		},
+		),
 		language,
 	}
 }

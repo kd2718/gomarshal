@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
-	kory := &person.Person{
+	kory := person.NewPerson(
 		32,
 		"Kory",
 		"Donati",
 		person.Age(5),
-	}
+	)
 
 	//var nandolist [2]int
 	nandolist := [2]int{12, 33}
