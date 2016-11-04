@@ -40,12 +40,8 @@ func (p *Person) Loop(outside chan Person) {
 	for ; p.Age < Age(200); {
 		fmt.Println("I am", p.First, p.Age, "he is", guy.First, guy.Age)
 		select {
-		case _, ok := <-outside:
-		if ok {
-			killout = false
-		} else {
-			killout = true
-		}
+		case <-outside:
+		    killout = true
 			break AgeLoop
 		case *guy = <- p.personChan:
 			if p.Age < guy.Age {
@@ -62,11 +58,14 @@ func (p *Person) Loop(outside chan Person) {
 		p.Birthday()
 	}
 	_ = killout
-	//if killout {
-	//	close(outside)
-	//} else {
-	//	outside <- *p
-	//}
+	if killout {
+		close(outside)
+	} else {
+		outside <- *p
+	}
+	for _ := range p.personChan {
+
+	}
 	fmt.Println(p.First, "Is done...", p.Age)
 	return
 }
