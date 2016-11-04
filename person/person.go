@@ -63,9 +63,7 @@ func (p *Person) Loop(outside chan Person) {
 	} else {
 		outside <- *p
 	}
-	for _ := range p.personChan {
-
-	}
+	_ = killout
 	fmt.Println(p.First, "Is done...", p.Age)
 	return
 }
@@ -190,7 +188,7 @@ func NewPerson(age Age, first, last string, v interface{}) *Person {
 		first,
 		last,
 		v,
-		make(chan Person),
+		make(chan Person, 1),
 	}
 }
 
