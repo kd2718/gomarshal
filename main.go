@@ -21,7 +21,7 @@ func main() {
 	fmt.Println("initial check", kory, nando)
 
 	e2, err := kory.Marshal()
-	if err != nil{
+	if err != nil {
 		fmt.Println("error")
 	}
 

@@ -23,21 +23,51 @@ type Person struct {
 	personChan chan Person
 }
 
-func (p *Person) Loop(outside chan Person){
-
+func (p *Person) Loop(outside chan Person) {
+	killout := false
 	guy := new(Person)
 	// register everyone
-	select{
-	case *guy = <- outside:
-		break
-	case *guy = <- guy.personChan:
-		outside <- *p
-	default:
-		outside <- *p
+	select {
+	case *guy = <-outside:
+		fmt.Println(p.First, "outside", guy.First)
+		guy.personChan <- *p
+	case *guy = <-p.personChan:
+		fmt.Println(p.First, "self", guy.First)
 	}
 
-	fmt.Println("I am", p)
-	fmt.Println("He is", guy)
+    fmt.Println("I am", p.First, p.Age, "he is", guy.First, guy.Age)
+	AgeLoop:
+	for ; p.Age < Age(200); {
+		fmt.Println("I am", p.First, p.Age, "he is", guy.First, guy.Age)
+		select {
+		case _, ok := <-outside:
+		if ok {
+			killout = false
+		} else {
+			killout = true
+		}
+			break AgeLoop
+		case *guy = <- p.personChan:
+			if p.Age < guy.Age {
+				fmt.Println("I am", p.First, p.Age, "he is", guy.First, guy.Age)
+				fmt.Println("falling behind, extra birthdays for", p.First)
+				p.Birthday()
+				p.Birthday()
+				p.Birthday()
+			}
+			guy.personChan <- *p
+		default:
+			guy.personChan <- *p
+		}
+		p.Birthday()
+	}
+	//_ = killout
+	if killout {
+		outside <- *p
+		close(outside)
+	}
+	fmt.Println(p.First, "Is done...", p.Age)
+	return
 }
 
 type Looper interface{
