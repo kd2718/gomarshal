@@ -61,11 +61,12 @@ func (p *Person) Loop(outside chan Person) {
 		}
 		p.Birthday()
 	}
-	//_ = killout
-	if killout {
-		outside <- *p
-		close(outside)
-	}
+	_ = killout
+	//if killout {
+	//	close(outside)
+	//} else {
+	//	outside <- *p
+	//}
 	fmt.Println(p.First, "Is done...", p.Age)
 	return
 }
